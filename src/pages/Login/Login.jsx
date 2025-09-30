@@ -10,14 +10,17 @@ import bgImg from "../../assets/others/authentication.png";
 import loginImg from "../../assets/others/authentication1.png";
 import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 const Login = () => {
   const [disabled, setDisabled] = useState(true);
   const { signIn, signInWithGoogle } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const axiosPublic = useAxiosPublic();
 
   const from = location.state?.from?.pathname || "/";
+  // console.log(location.state);
 
   useEffect(() => {
     loadCaptchaEnginge(6);
@@ -29,7 +32,7 @@ const Login = () => {
     const form = e.target;
     const email = form.email.value;
     const password = form.password.value;
-    console.log(email, password);
+    // console.log(email, password);
     signIn(email, password).then((result) => {
       const user = result.user;
       console.log(user);
@@ -63,29 +66,39 @@ const Login = () => {
     }
   };
 
-  // Google Signin
   const handleGoogleSignIn = async () => {
     try {
-      await signInWithGoogle();
+      const result = await signInWithGoogle();
+      const loggedUser = result.user;
+
+      const userInfo = {
+        name: loggedUser.displayName,
+        email: loggedUser.email,
+      };
+
+      axiosPublic.post("/users", userInfo).then((res) => {
+        console.log("User saved to DB:", res.data);
+      });
 
       Swal.fire({
         title: "User Login Successful!!!",
         showClass: {
           popup: `
-      animate__animated
-      animate__fadeInUp
-      animate__faster
-    `,
+          animate__animated
+          animate__fadeInUp
+          animate__faster
+        `,
         },
         hideClass: {
           popup: `
-      animate__animated
-      animate__fadeOutDown
-      animate__faster
-    `,
+          animate__animated
+          animate__fadeOutDown
+          animate__faster
+        `,
         },
       });
-      navigate("/");
+
+      navigate(from, { replace: true });
     } catch (err) {
       console.log(err);
     }

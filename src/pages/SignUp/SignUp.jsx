@@ -6,8 +6,10 @@ import { useContext } from "react";
 import { AuthContext } from "../../providers/AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 const SignUp = () => {
+  const axiosPublic = useAxiosPublic();
   const {
     register,
     handleSubmit,
@@ -24,16 +26,24 @@ const SignUp = () => {
     createUser(data.email, data.password).then(() => {
       updateUserProfile(data.name, data.photoURL)
         .then(() => {
-          console.log("user profile info updated");
-          reset();
-          Swal.fire({
-            position: "top-end",
-            icon: "success",
-            title: "User Created Successfully!!!",
-            showConfirmButton: false,
-            timer: 1500,
+          // create user entry in the database
+          const userInfo = {
+            name: data.name,
+            email: data.email,
+          };
+          axiosPublic.post("/users", userInfo).then((res) => {
+            if (res.data.insertedId) {
+              reset();
+              Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "User Created Successfully!!!",
+                showConfirmButton: false,
+                timer: 1500,
+              });
+              navigate("/");
+            }
           });
-          navigate("/");
         })
         .catch((err) => console.log(err));
     });
@@ -42,25 +52,27 @@ const SignUp = () => {
   // Google Signin
   const handleGoogleSignIn = async () => {
     try {
-      await signInWithGoogle();
+      const result = await signInWithGoogle();
+      const loggedUser = result.user;
 
-      Swal.fire({
-        title: "User Sign Up Successful!!!",
-        showClass: {
-          popup: `
-        animate__animated
-        animate__fadeInUp
-        animate__faster
-      `,
-        },
-        hideClass: {
-          popup: `
-        animate__animated
-        animate__fadeOutDown
-        animate__faster
-      `,
-        },
+      const userInfo = {
+        name: loggedUser.displayName,
+        email: loggedUser.email,
+      };
+
+      // Send to database
+      axiosPublic.post("/users", userInfo).then((res) => {
+        if (res.data.insertedId) {
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "User Created Successfully!!!",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        }
       });
+
       navigate("/");
     } catch (err) {
       console.log(err);
