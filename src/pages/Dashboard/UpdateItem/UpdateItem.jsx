@@ -14,7 +14,7 @@ const UpdateItem = () => {
   const axiosPublic = useAxiosPublic();
   const axiosSecure = useAxiosSecure();
   const onSubmit = async (data) => {
-    console.log(data);
+    // console.log(data);
     // image upload to imgbb and then get an url
     const imageFile = { image: data.image[0] };
     const res = await axiosPublic.post(image_hosting_api, imageFile, {
@@ -47,7 +47,7 @@ const UpdateItem = () => {
     console.log("with image url", res.data);
   };
   return (
-    <div>
+    <div className="mx-2 lg:mx-20">
       <SectionTitle
         heading="UPDATE AN ITEM"
         subheading="Refresh Info"
@@ -96,9 +96,13 @@ const UpdateItem = () => {
                 </label>
                 <input
                   type="number"
+                  step="any"
                   defaultValue={price}
                   className="input mt-2 w-full"
-                  {...register("price", { required: true })}
+                  {...register("price", {
+                    required: true,
+                    valueAsNumber: true,
+                  })}
                   placeholder="Price"
                 />
               </div>

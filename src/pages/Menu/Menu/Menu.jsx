@@ -6,6 +6,7 @@ import dessertImg from "../../../assets/menu/dessert-bg.jpeg";
 import pizzaImg from "../../../assets/menu/pizza-bg.jpg";
 import saladImg from "../../../assets/menu/salad-bg.jpg";
 import soupImg from "../../../assets/menu/soup-bg.jpg";
+import drinksImg from "../../../assets/menu/drinks-bg.jpg";
 import useMenu from "../../../hooks/useMenu";
 import SectionTitle from "../../../Components/SectionTitle/SectionTitle";
 import MenuCategory from "../MenuCategory/MenuCategory";
@@ -16,6 +17,7 @@ const Menu = () => {
   const soup = menu.filter((item) => item.category === "soup");
   const salad = menu.filter((item) => item.category === "salad");
   const pizza = menu.filter((item) => item.category === "pizza");
+  const drinks = menu.filter((item) => item.category === "drinks");
   const offered = menu.filter((item) => item.category === "offered");
   return (
     <div>
@@ -61,6 +63,13 @@ const Menu = () => {
         title="soup"
         text="Warm up with our homemade soups, slow-cooked to perfection. From creamy to brothy, every bowl is rich in taste and full of nourishing ingredients."
         img={soupImg}
+      ></MenuCategory>
+      {/* drink menu items */}
+      <MenuCategory
+        items={drinks}
+        title="drinks"
+        text="From classic favorites to colorful blends, every sip brings a burst of flavor."
+        img={drinksImg}
       ></MenuCategory>
     </div>
   );
