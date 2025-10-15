@@ -18,14 +18,14 @@ const CheckoutForm = () => {
   const navigate = useNavigate();
 
   const totalPrice = cart.reduce((total, item) => total + item.price, 0);
-  console.log(totalPrice);
+  // console.log(totalPrice);
 
   useEffect(() => {
     if (totalPrice > 0) {
       axiosSecure
         .post("/create-payment-intent", { price: totalPrice })
         .then((res) => {
-          console.log("ClientSecret:", res.data.clientSecret);
+          // console.log("ClientSecret:", res.data.clientSecret);
           setClientSecret(res.data.clientSecret);
         })
         .catch((err) => console.error("❌ Payment Intent Error:", err));
@@ -34,8 +34,8 @@ const CheckoutForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Stripe:", stripe, "Elements:", elements);
-    console.log("ClientSecret at submit:", clientSecret);
+    // console.log("Stripe:", stripe, "Elements:", elements);
+    // console.log("ClientSecret at submit:", clientSecret);
 
     if (!stripe || !elements) return;
 
@@ -49,7 +49,7 @@ const CheckoutForm = () => {
     });
 
     if (pmError) {
-      console.log(" Payment Method Error:", pmError.message);
+      // console.log(" Payment Method Error:", pmError.message);
       setError(pmError.message);
       return;
     } else {
@@ -79,7 +79,7 @@ const CheckoutForm = () => {
         // Payment succeeded
         console.log(" Payment Successful!", paymentResult.paymentIntent);
         if (paymentResult.paymentIntent.status === "succeeded") {
-          console.log("transaction id", paymentResult.paymentIntent.id);
+          // console.log("transaction id", paymentResult.paymentIntent.id);
           setTransactionId(paymentResult.paymentIntent.id);
           // now save the payment in the database
           const payment = {
